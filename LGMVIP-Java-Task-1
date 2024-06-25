@@ -1,60 +1,76 @@
-import java.util.Scanner;
-public class CurrencyConvert {
-   
-    public static void main(String args[])
-    {
-        double rupee,dollar,pound,code,euro;
-        
-       try (Scanner scanner = new Scanner(System.in)) {
-        System.out.println("****** CURRENCY CONVERTOR ********\nEnter the currency code \n1.Rupees\n2.Dollar\n3.Pound\n4.Euro");
-        code=scanner.nextInt();
-        if(code==1)
-        {
-            System.out.println("Enter amount in rupees:");
-            rupee=scanner.nextDouble();
-            dollar=rupee*0.012;
-            System.out.println("Dollar :"+dollar);
-            pound=rupee*0.0097;
-            System.out.println("pound :"+pound);
-            euro=rupee*0.011;
-            System.out.println("Euro :"+euro);
-        }
-        else if(code==2)
-        {
-            System.out.println("enter amount in dollar:");
-            dollar=scanner.nextDouble();
-            rupee=dollar*82.95;
-            System.out.println("Rupees :"+rupee);
-            pound=dollar*0.80;
-            System.out.println("Pound :"+pound);
-            euro=dollar*0.93;
-            System.out.println("Euro :"+euro);
-        }
-        else if(code==3)
-        {
-            System.out.println("Enter amount in Pound :");
-            pound=scanner.nextDouble();
-            rupee=pound*103.62;
-            System.out.println("Rupees :"+rupee);
-            dollar=pound*1.25;
-            System.out.println("Dollar :"+dollar);
-            euro=pound*1.16;
-            System.out.println("Euro :"+euro);
-        }
-        else if(code==4)
-        {
-            System.out.println("Enter amount in Euro :");
-            euro=scanner.nextDouble();
-            rupee=euro*89.11;
-            System.out.println("Rupees :"+rupee);
-            dollar=euro*1.07;
-            System.out.println("Dollar :"+dollar);
-            pound=euro*0.86;
-            System.out.println("Pound :"+pound);
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.util.*;
 
-        }
-        else 
-        System.out.println("Invalid code");
-    }    
+public class CurrencyConverter extends JFrame {
+
+    private JComboBox<String> fromCurrency, toCurrency;
+    private JTextField amountField, resultField;
+    private JButton convertButton;
+
+    public CurrencyConverter() {
+        // Set up the frame
+        setTitle("Currency Converter");
+        setSize(400, 200);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new GridLayout(4, 2));
+
+        // Add components
+        fromCurrency = new JComboBox<>(new String[] {"USD", "EUR", "GBP", "INR"});
+        toCurrency = new JComboBox<>(new String[] {"USD", "EUR", "GBP", "INR"});
+        amountField = new JTextField();
+        resultField = new JTextField();
+        resultField.setEditable(false);
+        convertButton = new JButton("Convert");
+
+        add(new JLabel("From:"));
+        add(fromCurrency);
+        add(new JLabel("To:"));
+        add(toCurrency);
+        add(new JLabel("Amount:"));
+        add(amountField);
+        add(new JLabel("Result:"));
+        add(resultField);
+        add(new JLabel(""));
+        add(convertButton);
+
+        // Add action listener
+        convertButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                convertCurrency();
+            }
+        });
+
+        setVisible(true);
+    }
+
+    private void convertCurrency() {
+        String from = fromCurrency.getSelectedItem().toString();
+        String to = toCurrency.getSelectedItem().toString();
+        double amount = Double.parseDouble(amountField.getText());
+        double exchangeRate = getExchangeRate(from, to);
+        double result = amount * exchangeRate;
+        resultField.setText(String.format("%.2f", result));
+    }
+
+    private double getExchangeRate(String from, String to) {
+        // In a real application, you would fetch the exchange rate from an API
+        // For simplicity, let's use some dummy exchange rates
+        Map<String, Double> rates = new HashMap<>();
+        rates.put("USD:EUR", 0.85);
+        rates.put("EUR:USD", 1.18);
+        rates.put("USD:GBP", 0.75);
+        rates.put("GBP:USD", 1.33);
+        rates.put("USD:INR", 74.00);
+        rates.put("INR:USD", 0.013);
+        // ... add more rates as needed
+
+        String key = from + ":" + to;
+        return rates.getOrDefault(key, 1.0);
+    }
+
+    public static void main(String[] args) {
+        new CurrencyConverter();
+    }
 }
-
